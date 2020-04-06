@@ -1,13 +1,14 @@
 package pl.jaceksysiak.demo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import pl.jaceksysiak.demo.entity.User;
-import pl.jaceksysiak.demo.entity.Credential;
+import pl.jaceksysiak.demo.entity.Account;
+import pl.jaceksysiak.demo.entity.Transaction;
 
 
 public class Application_CreateData {
@@ -17,8 +18,8 @@ public class Application_CreateData {
 		// create session factory
 		SessionFactory factory = new Configuration()
 								.configure("hibernate.cfg.xml")
-								.addAnnotatedClass(User.class)
-								.addAnnotatedClass(Credential.class)
+								.addAnnotatedClass(Account.class)
+								.addAnnotatedClass(Transaction.class)
 								.buildSessionFactory();
 		
 		// create session
@@ -28,28 +29,14 @@ public class Application_CreateData {
 			// start a transaction
 			session.beginTransaction();
 			
-			//Creating the Object User
-			User user = new User();
-			user.setFirstName("Kevin");
-			user.setLastName("Bowersox");
-			user.setAge(20);
-			user.setBirthDate(new Date());
-			user.setCreatedBy("Kevin Bowersox");
-			user.setCreatedDate(new Date());
-			user.setEmailAddress("kevin.bowersox@navy.mil");
-			user.setLastUpdatedDate(new Date());
-			user.setLastUpdatedBy("Kevin Bowersox");
-
-			//Creating the Object Credential
-			Credential credential = new Credential();
-			credential.setPassword("kevinspassword");
-			credential.setUsername("kmb385");
-			credential.setUser(user);
+			//Creating the Object 
+			Account account = createNewAccount();
 			
-			session.save(credential);
+			account.getTransactions().add(createNewBeltPurchase());
+			account.getTransactions().add(createShoePurchase());
 			
 			//Saving the Object to DB
-			//session.save();
+			session.save(account);
 						
 			// commit transaction
 			session.getTransaction().commit();
@@ -62,4 +49,47 @@ public class Application_CreateData {
 		}
 	}
 	
+	private static Transaction createNewBeltPurchase() {
+		Transaction beltPurchase = new Transaction();
+		beltPurchase.setTitle("Dress Belt");
+		beltPurchase.setAmount(new BigDecimal("50.00"));
+		beltPurchase.setClosingBalance(new BigDecimal("0.00"));
+		beltPurchase.setCreatedBy("Kevin Bowersox");
+		beltPurchase.setCreatedDate(new Date());
+		beltPurchase.setInitialBalance(new BigDecimal("0.00"));
+		beltPurchase.setLastUpdatedBy("Kevin Bowersox");
+		beltPurchase.setLastUpdatedDate(new Date());
+		beltPurchase.setNotes("New Dress Belt");
+		beltPurchase.setTransactionType("Debit");
+		return beltPurchase;
+	}
+
+	private static Transaction createShoePurchase() {
+		Transaction shoePurchase = new Transaction();
+		shoePurchase.setTitle("Work Shoes");
+		shoePurchase.setAmount(new BigDecimal("100.00"));
+		shoePurchase.setClosingBalance(new BigDecimal("0.00"));
+		shoePurchase.setCreatedBy("Kevin Bowersox");
+		shoePurchase.setCreatedDate(new Date());
+		shoePurchase.setInitialBalance(new BigDecimal("0.00"));
+		shoePurchase.setLastUpdatedBy("Kevin Bowersox");
+		shoePurchase.setLastUpdatedDate(new Date());
+		shoePurchase.setNotes("Nice Pair of Shoes");
+		shoePurchase.setTransactionType("Debit");
+		return shoePurchase;
+	}
+
+	private static Account createNewAccount() {
+		Account account = new Account();
+		account.setCloseDate(new Date());
+		account.setOpenDate(new Date());
+		account.setCreatedBy("Kevin Bowersox");
+		account.setInitialBalance(new BigDecimal("50.00"));
+		account.setName("Savings Account");
+		account.setCurrentBalance(new BigDecimal("100.00"));
+		account.setLastUpdatedBy("Kevin Bowersox");
+		account.setLastUpdatedDate(new Date());
+		account.setCreatedDate(new Date());
+		return account;
+	}
 }
